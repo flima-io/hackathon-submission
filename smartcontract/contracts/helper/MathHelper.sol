@@ -2,17 +2,16 @@
 pragma solidity ^0.8.4;
 
 library MathHelper {
-
     /**
-    * Returns the largest of two signed numbers
-    */
+     * Returns the largest of two signed numbers
+     */
     function max(int256 a, int256 b) internal pure returns (int256) {
         return a > b ? a : b;
     }
 
     /**
-    * Returns the smallest of two signed numbers
-    */
+     * Returns the smallest of two signed numbers
+     */
     function min(int256 a, int256 b) internal pure returns (int256) {
         return a < b ? a : b;
     }
@@ -35,8 +34,8 @@ library MathHelper {
     }
 
     /**
-    * Returns the square root if a number. If the number is not a perfect square, the value is rounded down
-    */
+     * Returns the square root if a number. If the number is not a perfect square, the value is rounded down
+     */
     function sqrt(uint256 a) internal pure returns (uint256) {
         if (a == 0) {
             return 0;
@@ -78,7 +77,7 @@ library MathHelper {
         uint256 result = 0;
 
         unchecked {
-             if (value >> 128 > 0) {
+            if (value >> 128 > 0) {
                 value >>= 128;
                 result += 128;
             }
@@ -113,4 +112,32 @@ library MathHelper {
         return result;
     }
 
+    // https://ethereum.stackexchange.com/questions/55701/how-to-do-solidity-percentage-calculation
+    // Calculate "x * y / scale" without causing overflow. Assumption: y < scale.
+    function percentage(
+        uint256 x,
+        uint256 y,
+        uint128 scale
+    ) internal pure returns (uint256) {
+        assert(y < scale);
+        uint256 a = x / scale;
+        uint256 b = x % scale;
+
+        return a * y + (b * y) / scale;
+    }
+
+    // https://ethereum.stackexchange.com/questions/55701/how-to-do-solidity-percentage-calculation
+    // Calculate "x * y / scale" without causing overflow. You have to use it when y can be bigger than scale.
+    function mulScale(
+        uint256 x,
+        uint256 y,
+        uint128 scale
+    ) internal pure returns (uint256) {
+        uint256 a = x / scale;
+        uint256 b = x % scale;
+        uint256 c = y / scale;
+        uint256 d = y % scale;
+
+        return a * c * scale + a * d + b * c + (b * d) / scale;
+    }
 }
